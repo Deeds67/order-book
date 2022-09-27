@@ -3,6 +3,9 @@ import java.util.*
 interface OrderBook {
     val ticker: String
     fun addOrder(order: Order, orderType: OrderType)
+    fun deleteOrder(orderId: Int)
+    fun printBuyHeap()
+    fun printSellHeap()
 }
 enum class OrderType { BUY, SELL }
 data class Order(val price: Double, var volume: Int, val id: Int)
@@ -61,11 +64,16 @@ class OrderBookImpl(override val ticker: String) : OrderBook {
         }
     }
 
-    fun printBuyHeap() {
+    override fun deleteOrder(orderId: Int) {
+        sellHeap.find { it.id == orderId}.let { sellHeap.remove(it) }
+        buyHeap.find { it.id == orderId}.let { buyHeap.remove(it) }
+    }
+
+    override fun printBuyHeap() {
         println("buy Heap" + buyHeap.toList())
     }
 
-    fun printSellHeap() {
+    override fun printSellHeap() {
         println("sell Heap" + sellHeap.toList())
     }
 

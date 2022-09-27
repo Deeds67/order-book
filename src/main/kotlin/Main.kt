@@ -1,6 +1,10 @@
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
+
+@OptIn(ExperimentalTime::class)
 fun main(args: Array<String>) {
-    val parser = XMLParser()
-    parser.parse("orders.xml")
+    val parser = XMLParser(mutableMapOf())
+    println(measureTime { parser.parse("orders.xml") })
 //    val orderBook = OrderBookImpl("ticker")
 //
 //    val buyOrder1 = Order(100.0, 50, 1)
