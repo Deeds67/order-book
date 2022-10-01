@@ -31,15 +31,7 @@ class OrderBookImpl(
                     buyHeap.add(order)
                 } else {
                     while (order.price >= (sellHeap.peek()?.price ?: Double.MAX_VALUE) && order.volume > 0) {
-                        val lowestSell = sellHeap.poll()
-                        if (lowestSell.volume - order.volume > 0) { // partial fill
-                            lowestSell.volume = lowestSell.volume - order.volume
-                            order.volume = 0
-                            sellHeap.add(lowestSell)
-                        } else {
-                            // full fill
-                            order.volume = order.volume - lowestSell.volume
-                        }
+                        fillPosition(order, sellHeap)
                     }
 
                     if (order.volume > 0) {
@@ -53,14 +45,7 @@ class OrderBookImpl(
                     sellHeap.add(order)
                 } else {
                     while (order.price <= (buyHeap.peek()?.price ?: Double.MIN_VALUE) && order.volume > 0) {
-                        val highestBuy = buyHeap.poll()
-                        if (highestBuy.volume - order.volume > 0) { // partial fill
-                            highestBuy.volume = highestBuy.volume - order.volume
-                            order.volume = 0
-                            buyHeap.add(highestBuy)
-                        } else {
-                            order.volume = order.volume - highestBuy.volume
-                        }
+                        fillPosition(order, buyHeap)
                     }
 
                     if (order.volume > 0) {
@@ -68,6 +53,17 @@ class OrderBookImpl(
                     }
                 }
             }
+        }
+    }
+
+    internal fun fillPosition(order: Order, heap: PriorityQueue<Order>) {
+        val position = heap.poll()
+        if (position.volume - order.volume > 0) { // partial fill
+            position.volume = position.volume - order.volume
+            order.volume = 0
+            heap.add(position)
+        } else {
+            order.volume = order.volume - position.volume
         }
     }
 
