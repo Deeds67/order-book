@@ -6,7 +6,8 @@ plugins {
 }
 
 group = "me.pierre"
-version = "1.0-SNAPSHOT"
+
+val kotestVersion = "5.4.2"
 
 repositories {
     mavenCentral()
@@ -14,6 +15,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }
 
 tasks.test {

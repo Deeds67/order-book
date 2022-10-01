@@ -7,14 +7,21 @@ interface OrderBook {
     fun printBuyHeap()
     fun printSellHeap()
 }
+
 enum class OrderType { BUY, SELL }
 data class Order(val price: Double, var volume: Int, val id: Int)
-class OrderBookImpl(override val ticker: String) : OrderBook {
-    private val buyComparator = compareByDescending<Order> { it.price }.thenBy { it.id }
-    val buyHeap = PriorityQueue(buyComparator)
 
-    private val sellComparator = compareBy<Order> { it.price }.thenBy { it.id }
-    val sellHeap = PriorityQueue(sellComparator)
+
+class OrderBookImpl(
+    override val ticker: String,
+    internal val buyHeap: PriorityQueue<Order>,
+    internal val sellHeap: PriorityQueue<Order>
+) : OrderBook {
+    constructor(ticker: String) : this(
+        ticker,
+        PriorityQueue(compareByDescending<Order> { it.price }.thenBy { it.id }),
+        PriorityQueue(compareBy<Order> { it.price }.thenBy { it.id })
+    )
 
 
     override fun addOrder(order: Order, orderType: OrderType) {
@@ -65,8 +72,8 @@ class OrderBookImpl(override val ticker: String) : OrderBook {
     }
 
     override fun deleteOrder(orderId: Int) {
-        sellHeap.find { it.id == orderId}.let { sellHeap.remove(it) }
-        buyHeap.find { it.id == orderId}.let { buyHeap.remove(it) }
+        sellHeap.find { it.id == orderId }.let { sellHeap.remove(it) }
+        buyHeap.find { it.id == orderId }.let { buyHeap.remove(it) }
     }
 
     override fun printBuyHeap() {
