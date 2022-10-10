@@ -1,3 +1,4 @@
+import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -18,15 +19,18 @@ class XMLParser(val orderBooks: MutableMap<String, OrderBook>) {
 
         for (i in 0 until orderCount) {
             val entry: Node = orders.item(i)
-            val attributes = entry.attributes
-            val book = attributes.getNamedItem("book")?.nodeValue
+            entry.attributes?.let { attributes ->
+                println("processing entry $i")
+                val book = attributes.getNamedItem("book")?.nodeValue
+                if (book != null) {
+                    val orderBook =  orderBooks.putIfAbsent(book, OrderBookImpl(book)) ?: orderBooks[book]!!
 
-            if (book != null) {
-                val runner = bookRunners.putIfAbsent(
-                    book,
-                    OrderBookRunner(orderBooks.putIfAbsent(book, OrderBookImpl(book))!!)
-                )!!
-                runner.processTask(entry)
+                    val runner = bookRunners.putIfAbsent(
+                        book,
+                        OrderBookRunner(orderBook)
+                    ) ?: bookRunners[book]!!
+                    runner.processTask(entry)
+                }
             }
         }
 
