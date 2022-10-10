@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 //    orderBook.printBuyHeap()
 //    orderBook.printSellHeap()
 //    orderBook.addOrder(sellOrder1, OrderType.SELL)
-//    orderBook.printBuyHeap()
+//    orderBook.printBuyHeap()`
 //    orderBook.printSellHeap()
 //    orderBook.addOrder(buyOrder2, OrderType.BUY)
 //    orderBook.printBuyHeap()

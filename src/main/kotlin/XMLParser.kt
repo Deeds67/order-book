@@ -20,12 +20,11 @@ class XMLParser(val orderBooks: MutableMap<String, OrderBook>) {
         for (i in 0 until orderCount) {
             val entry: Node = orders.item(i)
             entry.attributes?.let { attributes ->
-                println("processing entry $i")
                 val book = attributes.getNamedItem("book")?.nodeValue
                 if (book != null) {
-                    val orderBook =  orderBooks.putIfAbsent(book, OrderBookImpl(book)) ?: orderBooks[book]!!
+                    val orderBook =  orderBooks[book]?: orderBooks.putIfAbsent(book, OrderBookImpl(book)) ?: orderBooks[book]!!
 
-                    val runner = bookRunners.putIfAbsent(
+                    val runner = bookRunners[book]?: bookRunners.putIfAbsent(
                         book,
                         OrderBookRunner(orderBook)
                     ) ?: bookRunners[book]!!
